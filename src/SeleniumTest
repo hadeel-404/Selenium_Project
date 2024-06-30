@@ -1,0 +1,77 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.edge.EdgeDriver;
+import java.util.List;
+
+public class SeleniumTest {
+    public static void main(String[] args) {
+        // Set the path for the EdgeDriver executable
+        System.setProperty("webdriver.edge.driver", "C:/Users/asus/drivers/msedgedriver.exe");
+
+        // Create a new instance of the EdgeDriver
+        WebDriver driver = new EdgeDriver();
+
+        try {
+            // Navigate to Google
+            driver.get("https://www.google.com");
+
+            // Locate the search box element and enter a search query
+            WebElement searchBox = driver.findElement(By.name("q"));
+            searchBox.sendKeys("Selenium WebDriver");
+
+            // Submit the search query
+            searchBox.submit();
+
+            // Wait for the results to load
+            Thread.sleep(2000);
+
+            // Print the title of the current page
+            System.out.println("Page title is: " + driver.getTitle());
+
+            // Verify that the page title contains the search keyword
+            if (driver.getTitle().contains("Selenium")) {
+                System.out.println("Test Passed: Title contains 'Selenium'!");
+            } else {
+                System.out.println("Test Failed: Title does not contain 'Selenium'.");
+            }
+
+            // Verify that search results are displayed
+            List<WebElement> searchResults = driver.findElements(By.cssSelector("div.g"));
+            if (searchResults.size() > 0) {
+                System.out.println("Test Passed: Search results are displayed.");
+            } else {
+                System.out.println("Test Failed: No search results found.");
+            }
+
+            // Verify that a specific result is present (e.g., Selenium official website)
+            boolean seleniumFound = false;
+            for (WebElement result : searchResults) {
+                if (result.getText().contains("www.selenium.dev")) {
+                    seleniumFound = true;
+                    System.out.println("Test Passed: Selenium official website found in search results.");
+                    break;
+                }
+            }
+            if (!seleniumFound) {
+                System.out.println("Test Failed: Selenium official website not found in search results.");
+            }
+
+            // Click on the first search result link
+            if (searchResults.size() > 0) {
+                WebElement firstResultLink = searchResults.get(0).findElement(By.tagName("a"));
+                firstResultLink.click();
+
+                // Wait for the page to load and print the new title
+                Thread.sleep(2000);
+                System.out.println("New page title is: " + driver.getTitle());
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            // Close the browser
+            driver.quit();
+        }
+    }
+}
